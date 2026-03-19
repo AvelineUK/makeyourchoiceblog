@@ -35,7 +35,7 @@ const tagMap = {
   'Lone Wolf':      'lone-wolf',
   'Sorcery!':       'sorcery',
   'CYOA':           'cyoa',
-  'Twine & IF':     'twine-if',
+  'Miscellaneous':     'misc',
   'Essays':         'essay',
 };
 
