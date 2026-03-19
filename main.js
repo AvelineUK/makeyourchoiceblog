@@ -181,6 +181,31 @@ document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (
 });
 
 
+// ── SIDEBAR FILTER LINKS ──
+// Sidebar series links with data-filter trigger the same filter logic
+// as the topic pills, and keep the pills in sync visually.
+
+document.querySelectorAll('[data-filter]').forEach(function (link) {
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const filter = this.getAttribute('data-filter');
+
+    // Sync the topic pills — find the matching pill and click it
+    var matched = false;
+    document.querySelectorAll('.topic-pill').forEach(function (pill) {
+      if (tagMap[pill.textContent.trim()] === filter) {
+        pill.click();
+        matched = true;
+      }
+    });
+
+    // Scroll the topic bar into view so the user can see the active pill
+    var topicBar = document.querySelector('.topic-bar');
+    if (topicBar) topicBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+});
+
+
 // ── READING PROGRESS BAR ──
 const progressBar = document.getElementById('progress');
 
