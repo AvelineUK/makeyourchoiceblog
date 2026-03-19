@@ -622,18 +622,8 @@ h1.hero-title em { font-style: italic; }
   font-weight: 300;
   color: var(--text2);
   line-height: 1.65;
-  max-width: 460px;
+  max-width: 520px;
 }
-
-.hero-img-wrap {
-  align-self: stretch;
-  min-height: 230px;
-  background: var(--bg3);
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
-}
-
-.hero-img-wrap svg { width: 100%; height: 100%; display: block; }
 
 .page-body {
   max-width: var(--max);
@@ -957,7 +947,7 @@ h1.hero-title em { font-style: italic; }
   overflow: hidden;
 }
 
-.post-hero-img svg { width: 100%; height: 100%; display: block; }
+.post-img svg { width: 100%; height: 100%; display: block; }
 
 .post-hero-caption {
   font-family: var(--sans);
