@@ -25,6 +25,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error. Please try again later.' });
   }
 
+  // Pass the visitor's IP through to Buttondown for list quality checks
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || null;
+
   try {
     const response = await fetch('https://api.buttondown.email/v1/subscribers', {
       method: 'POST',
@@ -33,27 +36,28 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email,
+        email_address: email,
         tags: ['makeyourchoice-blog'],
+        ...(ip && { ip_address: ip }),
       }),
     });
 
     const data = await response.json();
 
-    // 201 = created, 200 = already subscribed (Buttondown behaviour)
+    // 201 = created
     if (response.ok) {
       return res.status(200).json({ success: true });
     }
 
-    // Buttondown returns a detail field on errors
-    const message = data?.detail
-      || data?.email?.[0]
-      || 'Something went wrong. Please try again.';
-
-    // 400 with "already subscribed" isn't really an error from the user's perspective
-    if (response.status === 400 && message.toLowerCase().includes('already')) {
+    // Handle already subscribed gracefully
+    const detail = JSON.stringify(data);
+    if (response.status === 422 && detail.toLowerCase().includes('already')) {
       return res.status(200).json({ success: true, alreadySubscribed: true });
     }
+
+    const message = data?.detail
+      || data?.email_address?.[0]
+      || 'Something went wrong. Please try again.';
 
     return res.status(response.status).json({ error: message });
 
