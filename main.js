@@ -58,6 +58,21 @@ document.querySelectorAll('.topic-pill').forEach(function (pill) {
         article.style.display = tags.includes(filter) ? '' : 'none';
       }
     });
+
+    // On the reviews page, hide section breaks whose grid has no visible cards
+    document.querySelectorAll('.section-break').forEach(function (br) {
+      // Find the reviews-grid that follows this section break
+      var grid = br.nextElementSibling;
+      while (grid && !grid.classList.contains('reviews-grid')) {
+        grid = grid.nextElementSibling;
+      }
+      if (!grid) return;
+      var hasVisible = Array.from(grid.querySelectorAll('[data-tags]')).some(function (a) {
+        return a.style.display !== 'none';
+      });
+      br.style.display = hasVisible || !filter ? '' : 'none';
+      grid.style.display = hasVisible || !filter ? '' : 'none';
+    });
   });
 });
 
