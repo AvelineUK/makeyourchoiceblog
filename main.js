@@ -3,6 +3,7 @@
    main.js — all scripts for all pages
    ============================================= */
 
+
 // ── HAMBURGER MENU ──
 const navToggle = document.getElementById('nav-toggle');
 const mobileNav = document.getElementById('mobile-nav');
@@ -27,67 +28,170 @@ if (navToggle && mobileNav) {
 }
 
 
-// ── TOPIC / FILTER PILLS ──
-// Maps pill text to the data-tags values used on articles
-const tagMap = {
-  'All':            null,
-  'Fighting Fantasy': 'fighting-fantasy',
-  'Lone Wolf':      'lone-wolf',
-  'Sorcery!':       'sorcery',
-  'CYOA':           'cyoa',
-  'Miscellaneous':     'misc',
-  'Fabled Lands':     'fabled',
-  'Essays':         'essay',
-};
+// ── SCROLL-TRIGGERED POST LOADING ──
+// All posts live in the DOM but are hidden. We reveal them BATCH_SIZE at a time
+// as the user scrolls near the bottom of the visible list.
+// When a filter is active, only matching posts count toward the batch.
 
-document.querySelectorAll('.topic-pill').forEach(function (pill) {
+(function () {
+  const BATCH_SIZE = 10;
+  const list = document.getElementById('post-list');
+  const sentinel = document.getElementById('load-sentinel');
+  if (!list || !sentinel) return;
+
+  let currentFilter = 'all';
+  let visibleCount = 0;
+
+  function getAllPosts() {
+    // Exclude the featured post — it's always visible and not part of the paginated list
+    return Array.from(list.querySelectorAll('article.post-row'));
+  }
+
+  function getFilteredPosts() {
+    return getAllPosts().filter(function (post) {
+      if (currentFilter === 'all') return true;
+      return (post.getAttribute('data-tags') || '').includes(currentFilter);
+    });
+  }
+
+  // Hide all posts, then show the first BATCH_SIZE matching the current filter
+  function applyFilter(filter) {
+    currentFilter = filter;
+    visibleCount = 0;
+
+    // Handle featured post visibility
+    var featured = document.getElementById('featured-post');
+    if (featured) {
+      if (filter === 'all') {
+        featured.style.display = '';
+      } else {
+        const tags = featured.getAttribute('data-tags') || '';
+        featured.style.display = tags.includes(filter) ? '' : 'none';
+      }
+    }
+
+    getAllPosts().forEach(function (post) {
+      post.style.display = 'none';
+    });
+
+    showNextBatch();
+  }
+
+  function showNextBatch() {
+    const filtered = getFilteredPosts();
+    const toShow = filtered.slice(visibleCount, visibleCount + BATCH_SIZE);
+
+    toShow.forEach(function (post) {
+      post.style.display = '';
+    });
+
+    visibleCount += toShow.length;
+
+    // Hide sentinel if all matching posts are now visible
+    if (visibleCount >= getFilteredPosts().length) {
+      sentinel.style.display = 'none';
+    } else {
+      sentinel.style.display = 'block';
+    }
+  }
+
+  // IntersectionObserver watches the sentinel element at the bottom of the list
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        showNextBatch();
+      }
+    });
+  }, { rootMargin: '200px' });
+
+  observer.observe(sentinel);
+
+  // Initial load
+  applyFilter('all');
+
+  // Expose applyFilter so the pill/sidebar handlers can call it
+  window.applyPostFilter = applyFilter;
+})();
+
+
+// ── INLINE FILTER PILLS (homepage) ──
+document.querySelectorAll('.filter-pill').forEach(function (pill) {
   pill.addEventListener('click', function () {
-    document.querySelectorAll('.topic-pill').forEach(function (p) {
+    document.querySelectorAll('.filter-pill').forEach(function (p) {
       p.classList.remove('active');
     });
     this.classList.add('active');
 
-    const filter = tagMap[this.textContent.trim()];
-    const articles = document.querySelectorAll('[data-tags]');
-    if (!articles.length) return;
+    const filter = this.getAttribute('data-filter');
+    if (window.applyPostFilter) window.applyPostFilter(filter);
 
-    articles.forEach(function (article) {
-      if (!filter) {
-        article.style.display = '';
-      } else {
-        const tags = article.getAttribute('data-tags') || '';
-        article.style.display = tags.includes(filter) ? '' : 'none';
-      }
-    });
-
-    // On the reviews page, hide section breaks whose grid has no visible cards
-    document.querySelectorAll('.section-break').forEach(function (br) {
-      // Find the reviews-grid that follows this section break
-      var grid = br.nextElementSibling;
-      while (grid && !grid.classList.contains('reviews-grid')) {
-        grid = grid.nextElementSibling;
-      }
-      if (!grid) return;
-      var hasVisible = Array.from(grid.querySelectorAll('[data-tags]')).some(function (a) {
-        return a.style.display !== 'none';
-      });
-      br.style.display = hasVisible || !filter ? '' : 'none';
-      grid.style.display = hasVisible || !filter ? '' : 'none';
-    });
+    // Also sync the hidden topic pills for sidebar filter compatibility
+    syncTopicPills(filter);
   });
 });
 
-// ── NEWSLETTER SUBSCRIPTION ──
-// Finds all newsletter forms on the page and wires them up to /api/subscribe.
-// Each form needs: an input[type="email"] and a button[type="button" or "submit"].
-// Feedback is shown in a sibling .newsletter-msg element, created if not present.
 
+// ── TOPIC PILLS (hidden bar — kept for sidebar sync) ──
+const tagMap = {
+  'All':              'all',
+  'Fighting Fantasy': 'fighting-fantasy',
+  'Lone Wolf':        'lone-wolf',
+  'Sorcery!':         'sorcery',
+  'Fabled Lands':     'fabled',
+  'CYOA':             'cyoa',
+  'Miscellaneous':    'misc',
+  'Essays':           'essay',
+};
+
+function syncTopicPills(filter) {
+  document.querySelectorAll('.topic-pill').forEach(function (pill) {
+    const pillFilter = tagMap[pill.textContent.trim()];
+    pill.classList.toggle('active', pillFilter === filter || (filter === 'all' && pill.textContent.trim() === 'All'));
+  });
+}
+
+document.querySelectorAll('.topic-pill').forEach(function (pill) {
+  pill.addEventListener('click', function () {
+    const filter = tagMap[this.textContent.trim()] || 'all';
+    syncTopicPills(filter);
+    syncFilterPills(filter);
+    if (window.applyPostFilter) window.applyPostFilter(filter);
+  });
+});
+
+function syncFilterPills(filter) {
+  document.querySelectorAll('.filter-pill').forEach(function (pill) {
+    pill.classList.toggle('active', pill.getAttribute('data-filter') === filter);
+  });
+}
+
+
+// ── SIDEBAR FILTER LINKS ──
+document.querySelectorAll('[data-filter]').forEach(function (link) {
+  // Skip the inline filter pills — they have their own handler above
+  if (link.classList.contains('filter-pill')) return;
+
+  link.addEventListener('click', function (e) {
+    e.preventDefault();
+    const filter = this.getAttribute('data-filter');
+
+    syncFilterPills(filter);
+    syncTopicPills(filter);
+    if (window.applyPostFilter) window.applyPostFilter(filter);
+
+    // Scroll inline pills into view
+    var pills = document.getElementById('filter-pills');
+    if (pills) pills.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+});
+
+
+// ── NEWSLETTER SUBSCRIPTION ──
 document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (form) {
   const input = form.querySelector('input[type="email"]');
   const button = form.querySelector('button');
   if (!input || !button) return;
 
-  // Create a message element for feedback
   let msg = form.querySelector('.newsletter-msg');
   if (!msg) {
     msg = document.createElement('p');
@@ -127,8 +231,8 @@ document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (
         button.textContent = 'Subscribed ✓';
         setMsg(
           data.alreadySubscribed
-            ? 'You\'re already subscribed — good to have you.'
-            : 'You\'re in. Talk soon.',
+            ? "You're already subscribed — good to have you."
+            : "You're in. Talk soon.",
           false
         );
       } else {
@@ -145,29 +249,40 @@ document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (
 });
 
 
-// ── SIDEBAR FILTER LINKS ──
-// Sidebar series links with data-filter trigger the same filter logic
-// as the topic pills, and keep the pills in sync visually.
+// ── DICE ROLLER ──
+const die = document.getElementById('die');
+const dieResult = document.getElementById('die-result');
 
-document.querySelectorAll('[data-filter]').forEach(function (link) {
-  link.addEventListener('click', function (e) {
-    e.preventDefault();
-    const filter = this.getAttribute('data-filter');
+if (die && dieResult) {
+  const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  const outcomes = [
+    [2,  'Snake eyes. You fall into a pit. Lose 4 STAMINA.'],
+    [3,  'A poor roll. The fates are unkind.'],
+    [4,  'Barely adequate. You survive, for now.'],
+    [5,  'Mediocre. The dungeon smirks.'],
+    [6,  'Passable. You keep moving, cautiously.'],
+    [7,  'Fair. The monster hesitates.'],
+    [8,  'Decent. Your sword arm holds steady.'],
+    [9,  'Good. Fortune is cautiously on your side.'],
+    [10, 'Strong! You press the advantage.'],
+    [11, 'Excellent! Even the dungeon is impressed.'],
+    [12, 'Maximum roll. You are briefly unstoppable.']
+  ];
 
-    // Sync the topic pills — find the matching pill and click it
-    var matched = false;
-    document.querySelectorAll('.topic-pill').forEach(function (pill) {
-      if (tagMap[pill.textContent.trim()] === filter) {
-        pill.click();
-        matched = true;
-      }
-    });
+  function rollDie() {
+    const d1 = Math.floor(Math.random() * 6);
+    const d2 = Math.floor(Math.random() * 6);
+    const total = d1 + d2 + 2;
+    die.textContent = faces[d1];
+    const outcome = outcomes.find(function (o) { return o[0] === total; });
+    dieResult.innerHTML = '<strong>' + total + '</strong> — ' + outcome[1];
+  }
 
-    // Scroll the topic bar into view so the user can see the active pill
-    var topicBar = document.querySelector('.topic-bar');
-    if (topicBar) topicBar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  });
-});
+  die.addEventListener('click', rollDie);
+
+  const dieBtn = document.querySelector('.die-btn');
+  if (dieBtn) dieBtn.addEventListener('click', rollDie);
+}
 
 
 // ── READING PROGRESS BAR ──

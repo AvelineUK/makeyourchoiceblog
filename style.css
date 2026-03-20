@@ -17,7 +17,7 @@
   --serif:   'DM Serif Display', Georgia, serif;
   --body:    'Literata', Georgia, serif;
   --sans:    'DM Sans', system-ui, sans-serif;
-  --max:     1192px;
+  --max:     1200px;
   --col:     680px;
 }
 
@@ -241,6 +241,33 @@ nav a.active { color: var(--text); border-bottom-color: var(--text); }
 /* ================================================
    TOPIC / FILTER BAR
    ================================================ */
+
+/* Topic bar hidden — filtering handled by sidebar and inline pills */
+.topic-bar { display: none; }
+
+/* ── INLINE FILTER PILLS ── */
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.filter-pill {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--text2);
+  background: var(--bg3);
+  border: 1px solid transparent;
+  padding: 0.3rem 0.875rem;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.filter-pill:hover { background: var(--border); color: var(--text); }
+.filter-pill.active { background: var(--bg); color: var(--text); border-color: var(--text); }
 
 .topic-bar {
   border-bottom: 1px solid var(--border);
