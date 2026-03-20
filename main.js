@@ -36,6 +36,7 @@ const tagMap = {
   'Sorcery!':       'sorcery',
   'CYOA':           'cyoa',
   'Miscellaneous':     'misc',
+  'Fabled Lands':     'fabled',
   'Essays':         'essay',
 };
 
