@@ -76,43 +76,6 @@ document.querySelectorAll('.topic-pill').forEach(function (pill) {
   });
 });
 
-
-// ── DICE ROLLER ──
-const die = document.getElementById('die');
-const dieResult = document.getElementById('die-result');
-
-if (die && dieResult) {
-  const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  const outcomes = [
-    [2,  'Snake eyes. You fall into a pit. Lose 4 STAMINA.'],
-    [3,  'A poor roll. The fates are unkind.'],
-    [4,  'Barely adequate. You survive, for now.'],
-    [5,  'Mediocre. The dungeon smirks.'],
-    [6,  'Passable. You keep moving, cautiously.'],
-    [7,  'Fair. The monster hesitates.'],
-    [8,  'Decent. Your sword arm holds steady.'],
-    [9,  'Good. Fortune is cautiously on your side.'],
-    [10, 'Strong! You press the advantage.'],
-    [11, 'Excellent! Even the dungeon is impressed.'],
-    [12, 'Maximum roll. You are briefly unstoppable.']
-  ];
-
-  function rollDie() {
-    const d1 = Math.floor(Math.random() * 6);
-    const d2 = Math.floor(Math.random() * 6);
-    const total = d1 + d2 + 2;
-    die.textContent = faces[d1];
-    const outcome = outcomes.find(function (o) { return o[0] === total; });
-    dieResult.innerHTML = '<strong>' + total + '</strong> — ' + outcome[1];
-  }
-
-  die.addEventListener('click', rollDie);
-
-  const dieBtn = document.querySelector('.die-btn');
-  if (dieBtn) dieBtn.addEventListener('click', rollDie);
-}
-
-
 // ── NEWSLETTER SUBSCRIPTION ──
 // Finds all newsletter forms on the page and wires them up to /api/subscribe.
 // Each form needs: an input[type="email"] and a button[type="button" or "submit"].
