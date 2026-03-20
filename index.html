@@ -60,28 +60,27 @@
   </div>
 </div>
 
-<!-- Topic bar kept in HTML (hidden via CSS) so sidebar filter JS can sync with it -->
-<div class="topic-bar">
-  <div class="topic-bar-inner">
-    <span class="topic-pill active">All</span>
-    <span class="topic-pill">Fighting Fantasy</span>
-    <span class="topic-pill">Lone Wolf</span>
-    <span class="topic-pill">Sorcery!</span>
-    <span class="topic-pill">Fabled Lands</span>
-    <span class="topic-pill">CYOA</span>
-    <span class="topic-pill">Miscellaneous</span>
-    <span class="topic-pill">Essays</span>
-  </div>
-</div>
-
 <div class="page-body two-col">
   <main>
+
+    <!-- INLINE FILTER PILLS -->
+    <div class="filter-pills" id="filter-pills">
+      <button class="filter-pill active" data-filter="all">All</button>
+      <!-- <button class="filter-pill" data-filter="blood">Blood Sword</button> -->
+      <button class="filter-pill" data-filter="cyoa">CYOA</button>
+      <!-- <button class="filter-pill" data-filter="fabled">Fabled Lands</button> -->
+      <!-- <button class="filter-pill" data-filter="fighting-fantasy">Fighting Fantasy</button> -->
+      <!-- <button class="filter-pill" data-filter="lone-wolf">Lone Wolf</button> -->
+      <!-- <button class="filter-pill" data-filter="sorcery">Sorcery!</button> -->   
+      <!-- <button class="filter-pill" data-filter="misc">Miscellaneous</button> -->
+      <!-- <button class="filter-pill" data-filter="essay">Essays</button> -->
+    </div>
 
     <!-- FEATURED ARTICLE -->
     <!-- Update this each time you publish something new. -->
     <!-- Move the previous featured article into the post list below. -->
-    <!--
-    <article class="featured" id="featured-post" data-tags="fighting-fantasy review">
+    
+    <!-- <article class="featured" id="featured-post" data-tags="fighting-fantasy review">
       <div>
         <div class="author-row">
           <div class="avatar">MYC</div>
@@ -102,9 +101,8 @@
 
     <div class="section-break">
       <span class="section-break-label">All posts</span>
-      <div class="section-break-line"></div>
-    </div>
-    -->
+    </div> -->
+    
 
     <!-- POST LIST -->
     <!-- Add new posts at the TOP of this list (newest first) -->
@@ -152,19 +150,6 @@
   <aside class="sidebar">
 
     <div class="sidebar-section">
-      <div class="sidebar-heading">Browse by series</div>
-      <div class="topics-grid">
-        <a href="#" data-filter="fighting-fantasy">Fighting Fantasy</a>
-        <a href="#" data-filter="lone-wolf">Lone Wolf</a>
-        <a href="#" data-filter="sorcery">Sorcery!</a>
-        <a href="#" data-filter="fabled">Fabled Lands</a>
-        <a href="#" data-filter="cyoa">CYOA</a>
-        <a href="#" data-filter="misc">Miscellaneous</a>
-        <a href="#" data-filter="essay">Essays</a>
-      </div>
-    </div>
-
-    <div class="sidebar-section" id="newsletter">
       <div class="sidebar-heading">New posts by email</div>
       <div class="newsletter-box">
         <p>No spam. Just a short note when something new goes up: roughly once or twice a month.</p>
@@ -178,7 +163,7 @@
 
 <footer>
   <div class="footer-inner">
-    <span class="footer-logo">Make Your Choice</span>
+    <span class="footer-logo"><a href="index.html">Make Your Choice</a></span>
     <div class="footer-links">
       <a href="about.html">About</a>
       <a href="#newsletter">Subscribe</a>

@@ -121,67 +121,8 @@ document.querySelectorAll('.filter-pill').forEach(function (pill) {
       p.classList.remove('active');
     });
     this.classList.add('active');
-
     const filter = this.getAttribute('data-filter');
     if (window.applyPostFilter) window.applyPostFilter(filter);
-
-    // Also sync the hidden topic pills for sidebar filter compatibility
-    syncTopicPills(filter);
-  });
-});
-
-
-// ── TOPIC PILLS (hidden bar — kept for sidebar sync) ──
-const tagMap = {
-  'All':              'all',
-  'Fighting Fantasy': 'fighting-fantasy',
-  'Lone Wolf':        'lone-wolf',
-  'Sorcery!':         'sorcery',
-  'Fabled Lands':     'fabled',
-  'CYOA':             'cyoa',
-  'Miscellaneous':    'misc',
-  'Essays':           'essay',
-};
-
-function syncTopicPills(filter) {
-  document.querySelectorAll('.topic-pill').forEach(function (pill) {
-    const pillFilter = tagMap[pill.textContent.trim()];
-    pill.classList.toggle('active', pillFilter === filter || (filter === 'all' && pill.textContent.trim() === 'All'));
-  });
-}
-
-document.querySelectorAll('.topic-pill').forEach(function (pill) {
-  pill.addEventListener('click', function () {
-    const filter = tagMap[this.textContent.trim()] || 'all';
-    syncTopicPills(filter);
-    syncFilterPills(filter);
-    if (window.applyPostFilter) window.applyPostFilter(filter);
-  });
-});
-
-function syncFilterPills(filter) {
-  document.querySelectorAll('.filter-pill').forEach(function (pill) {
-    pill.classList.toggle('active', pill.getAttribute('data-filter') === filter);
-  });
-}
-
-
-// ── SIDEBAR FILTER LINKS ──
-document.querySelectorAll('[data-filter]').forEach(function (link) {
-  // Skip the inline filter pills — they have their own handler above
-  if (link.classList.contains('filter-pill')) return;
-
-  link.addEventListener('click', function (e) {
-    e.preventDefault();
-    const filter = this.getAttribute('data-filter');
-
-    syncFilterPills(filter);
-    syncTopicPills(filter);
-    if (window.applyPostFilter) window.applyPostFilter(filter);
-
-    // Scroll inline pills into view
-    var pills = document.getElementById('filter-pills');
-    if (pills) pills.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 });
 
