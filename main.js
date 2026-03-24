@@ -190,7 +190,6 @@ document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (
 });
 
 // ── SHARE BUTTON ──
-// Uses Web Share API on mobile, falls back to copying the URL on desktop.
 const shareBtn = document.getElementById('share-btn');
 
 if (shareBtn) {
@@ -202,18 +201,28 @@ if (shareBtn) {
       try {
         await navigator.share({ title, url });
       } catch (err) {
-        // User cancelled or share failed — do nothing
+        // User cancelled — do nothing
       }
     } else {
-      // Fallback: copy URL to clipboard
       try {
         await navigator.clipboard.writeText(url);
         const original = shareBtn.innerHTML;
         shareBtn.title = 'Copied!';
         shareBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>';
+
+        let copyMsg = document.getElementById('copy-msg');
+        if (!copyMsg) {
+          copyMsg = document.createElement('span');
+          copyMsg.id = 'copy-msg';
+          copyMsg.style.cssText = 'font-family:var(--sans);font-size:0.75rem;color:var(--text3);margin-left:0.5rem;';
+          shareBtn.insertAdjacentElement('afterend', copyMsg);
+        }
+        copyMsg.textContent = 'Link copied';
+
         setTimeout(function () {
           shareBtn.innerHTML = original;
           shareBtn.title = 'Share';
+          copyMsg.textContent = '';
         }, 2000);
       } catch (err) {
         // Clipboard failed — nothing useful to do
@@ -224,11 +233,6 @@ if (shareBtn) {
 
 
 // ── SPOILERS ──
-// Inline spoilers: <span class="spoiler">hidden text</span>
-// Block spoilers: <details class="spoiler-block"><summary></summary><p>...</p></details>
-// The block spoiler uses native <details> so needs no JS.
-// The inline spoiler needs a click handler.
-
 document.querySelectorAll('.spoiler').forEach(function (el) {
   el.addEventListener('click', function () {
     this.classList.toggle('revealed');
