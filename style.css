@@ -928,7 +928,7 @@ h1.hero-title em { font-style: italic; }
 .byline-actions { display: flex; align-items: center; gap: 0.25rem; }
 
 .post-hero {
-  max-width: 900px;
+  max-width: 680px;
   margin: 2.5rem auto 0;
   padding: 0 2rem;
 }
