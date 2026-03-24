@@ -189,6 +189,53 @@ document.querySelectorAll('.newsletter-box, .about-cta-form').forEach(function (
   });
 });
 
+// ── SHARE BUTTON ──
+// Uses Web Share API on mobile, falls back to copying the URL on desktop.
+const shareBtn = document.getElementById('share-btn');
+
+if (shareBtn) {
+  shareBtn.addEventListener('click', async function () {
+    const url = window.location.href;
+    const title = document.title;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+      } catch (err) {
+        // User cancelled or share failed — do nothing
+      }
+    } else {
+      // Fallback: copy URL to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        const original = shareBtn.innerHTML;
+        shareBtn.title = 'Copied!';
+        shareBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>';
+        setTimeout(function () {
+          shareBtn.innerHTML = original;
+          shareBtn.title = 'Share';
+        }, 2000);
+      } catch (err) {
+        // Clipboard failed — nothing useful to do
+      }
+    }
+  });
+}
+
+
+// ── SPOILERS ──
+// Inline spoilers: <span class="spoiler">hidden text</span>
+// Block spoilers: <details class="spoiler-block"><summary></summary><p>...</p></details>
+// The block spoiler uses native <details> so needs no JS.
+// The inline spoiler needs a click handler.
+
+document.querySelectorAll('.spoiler').forEach(function (el) {
+  el.addEventListener('click', function () {
+    this.classList.toggle('revealed');
+  });
+});
+
+
 // ── READING PROGRESS BAR ──
 const progressBar = document.getElementById('progress');
 
