@@ -182,16 +182,17 @@
 
 <!-- POST END -->
 <div class="post-end">
-  <div class="post-end-tags">
-    <span>Tagged:</span>
-    <a href="#"><span class="tag-pill">{{SERIES}}</span></a>
-    <a href="#"><span class="tag-pill review">Review</span></a>
-    <a href="#"><span class="tag-pill">{{BOOK_AUTHOR}}</span></a>
-    <a href="#"><span class="tag-pill">{{BOOK_YEAR}}</span></a>
-  </div>
 
   <div class="author-card">
-    <div class="author-card-avatar">MYC</div>
+    <div class="author-card-avatar">
+      <svg width="64" height="64" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2" y="2" width="28" height="28" rx="6" fill="#242424"/>
+        <circle cx="10" cy="10" r="2.8" fill="#ffffff"/>
+        <circle cx="22" cy="10" r="2.8" fill="#ffffff"/>
+        <circle cx="10" cy="22" r="2.8" fill="#ffffff"/>
+        <circle cx="22" cy="22" r="2.8" fill="#ffffff"/>
+        <circle cx="16" cy="16" r="2.8" fill="#ffffff"/>
+      </svg></div>
     <div class="author-card-body">
       <div class="name">Make Your Choice</div>
       <p>Reading every gamebook I can get my hands on: vintage Fighting Fantasy, Lone Wolf, CYOA, and modern interactive fiction... and writing about them.</p>
@@ -201,14 +202,14 @@
   <div class="more-posts-heading">More like this</div>
   <div class="more-posts-grid">
     <div class="more-post">
-      <div class="author-row" style="margin-bottom:0.5rem;">
+      <div class="author-row">
         <span class="tag-pill">{{RELATED_1_TAG}}</span>
         <span class="meta-small">{{RELATED_1_DATE}}</span>
       </div>
       <h4><a href="{{RELATED_1_SLUG}}.html">{{RELATED_1_TITLE}}</a></h4>
     </div>
     <div class="more-post">
-      <div class="author-row" style="margin-bottom:0.5rem;">
+      <div class="author-row">
         <span class="tag-pill">{{RELATED_2_TAG}}</span>
         <span class="meta-small">{{RELATED_2_DATE}}</span>
       </div>
