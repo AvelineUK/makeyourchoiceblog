@@ -1042,6 +1042,12 @@ h1.hero-title em { font-style: italic; }
   font-style: italic;
 }
 
+.stat-value2 {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--text);
+}
+
 .verdict {
   border-top: 2px solid var(--text);
   border-bottom: 1px solid var(--border);
